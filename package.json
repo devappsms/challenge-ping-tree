@@ -6,7 +6,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "nyc ava && npm run deps && standard",
-    "deps": "depcheck ."
+    "deps": "depcheck .",
+    "standard": "standard --fix"
   },
   "keywords": [],
   "author": "",
@@ -27,7 +28,7 @@
     "healthpoint": "^1.0.0",
     "http-hash-router": "^2.0.1",
     "productionize": "^4.1.0",
-    "redis": "^3.0.2",
+    "redis": "^4.2.0",
     "req-logger": "^2.0.0",
     "send-data": "^8.0.0"
   },
