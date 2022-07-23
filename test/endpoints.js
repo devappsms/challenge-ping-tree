@@ -1,33 +1,35 @@
 process.env.NODE_ENV = 'test'
-var fs = require('fs')
 var test = require('ava')
 var servertest = require('servertest')
-var path = require('path')
 const { BufferListStream } = require('bl')
+var path = require('path')
+var fs = require('fs')
 
 var server = require('../lib/server')
-const { content, contentNegative, contentNotPresent } = require('../lib/testContants')
-const { POST_TARGET, GET_TARGET, ROUTE } = require('../lib/urlContants')
+var fileWriteSync = require('../lib/fileWriteSync')
+const { content, contentNegative, contentNotPresent } = require('../lib/constants/testContants')
+const { POST_TARGET, GET_TARGET, ROUTE } = require('../lib/constants/urlContants')
 
 const fileData = [content, contentNegative, contentNotPresent]
 
 const files = ['content', 'contentNegative', 'contentNotPresent']
 
 files.forEach((element, index) => {
-  console.log(element, fileData[index])
-  try {
-    fs.writeFileSync(path.resolve(__dirname, `${element}.json`), JSON.stringify(fileData[index]))
-    // file written successfully
-  } catch (err) {
-    console.error(err)
+  const dirPath = path.resolve(__dirname, 'test-data')
+  const opts = {
+    dir: dirPath,
+    fileName: `${element}.json`,
+    data: fileData[index]
   }
+  fileWriteSync(opts)
 })
 
 // Common function to test using serverStream
 function testPostMethod (details, t) {
   const { url, method, fileName, testData } = details
+  const dirPath = path.resolve(__dirname, 'test-data')
   var serverStream = servertest(server(), url, { method: method })
-  fs.createReadStream(path.resolve(__dirname, fileName), 'UTF-8').pipe(serverStream)
+  fs.createReadStream(path.resolve(dirPath, fileName), 'UTF-8').pipe(serverStream)
   serverStream.pipe(BufferListStream(function (err, data) {
     t.falsy(err, 'no error')
 
